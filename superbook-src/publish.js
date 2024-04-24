@@ -167,12 +167,15 @@ const init = async () => {
 						let content = await readFile(chapter.path);
 
 						// Convert relative URLs to absolute
-						const regex = /<img src="([^"]+)"/g;
-						content = content.replace(regex, (_, src) => {
+						const regex = /<figure>\s*<img\s+src="([^"]+)"[^>]*alt="([^"]+)"[^>]*>\s*<figcaption>\s*<em>([^<]+)<\/em>\s*<\/figcaption>\s*<br><br>\s*<\/figure>/g;
+						content = content.replace(regex, (_, src, alt, caption) => {
 							if(src.match(/^https?:\/\//) == null){
-								return `<img src="https://raw.githubusercontent.com/getify/You-Dont-Know-JS/2nd-ed/${bookSchema.sourceName}/${src}"`;
+								// console.log(src, caption)
+								return `![${alt}](https://raw.githubusercontent.com/getify/You-Dont-Know-JS/2nd-ed/${bookSchema.sourceName}/${src})\n*${caption}*`;
 							}
-							return src;
+							else{
+								return src;
+							}
 						})
 						
 						await createOrUpdateChapter(bookId, chapter.name, content);

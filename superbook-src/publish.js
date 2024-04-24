@@ -155,11 +155,26 @@ const init = async () => {
 		];
  
 			const promises = books.map((bookSchema => {
+				function test(regex, content)
+				{
+					console.log('ran')
+					return regex.exec(content)
+				}
 				const fun = async () => {
 					console.log('--> BOOK : '+bookSchema.name);
 					const bookId = await createOrUpdateBook(bookSchema);
 					for (const chapter of bookSchema.chapters) {
-						const content = await readFile(chapter.path);
+						let content = await readFile(chapter.path);
+
+						// Convert relative URLs to absolute
+						const regex = /<img src="([^"]+)"/g;
+						content = content.replace(regex, (_, src) => {
+							if(src.match(/^https?:\/\//) == null){
+								return `<img src="https://raw.githubusercontent.com/getify/You-Dont-Know-JS/2nd-ed/${bookSchema.sourceName}/${src}"`;
+							}
+							return src;
+						})
+						
 						await createOrUpdateChapter(bookId, chapter.name, content);
 					}
 				};

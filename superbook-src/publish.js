@@ -170,7 +170,6 @@ const init = async () => {
 						const regex = /<figure>\s*<img\s+src="([^"]+)"[^>]*alt="([^"]+)"[^>]*>\s*<figcaption>\s*<em>([^<]+)<\/em>\s*<\/figcaption>\s*<br><br>\s*<\/figure>/g;
 						content = content.replace(regex, (_, src, alt, caption) => {
 							if(src.match(/^https?:\/\//) == null){
-								// console.log(src, caption)
 								return `![${alt}](https://raw.githubusercontent.com/getify/You-Dont-Know-JS/2nd-ed/${bookSchema.sourceName}/${src})\n*${caption}*`;
 							}
 							else{
